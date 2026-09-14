@@ -5,7 +5,7 @@ import App from "./App.tsx";
 import { AppProvider } from "./context/AppContext.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-export const server = "https://ai-career-backend-q7xn.onrender.com";
+export const server = import.meta.env.VITE_SERVER_URL || "https://ai-career-backend-dak4.onrender.com";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
