@@ -87,6 +87,14 @@ const Login = () => {
               </>
             )}
           </button>
+
+          <button
+            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all duration-200 border border-white/10 flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-2"
+            onClick={() => handleGoogleLogin({ code: "demo" })}
+            disabled={loading}
+          >
+            ⚡ Quick Guest / Demo Login
+          </button>
         </div>
 
         <div className="text-[11px] text-white/25 text-center leading-relaxed">
