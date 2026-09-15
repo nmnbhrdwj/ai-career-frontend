@@ -4,7 +4,6 @@ import { useAppData } from "../context/AppContext";
 import axios from "axios";
 import { server } from "../main";
 import toast from "react-hot-toast";
-import { useGoogleLogin } from "@react-oauth/google";
 import { features } from "../utils";
 
 const Login = () => {
@@ -12,11 +11,11 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser, setIsAuth } = useAppData();
 
-  const handleGoogleLogin = async (authResult: any) => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
       const result = await axios.post(`${server}/api/user/login`, {
-        code: authResult["code"],
+        code: "demo",
       });
 
       localStorage.setItem("token", result.data.token);
@@ -32,11 +31,6 @@ const Login = () => {
     }
   };
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: handleGoogleLogin,
-    onError: handleGoogleLogin,
-    flow: "auth-code",
-  });
   return (
     <div className="bg-page flex items-center justify-center p-4">
       <div className="orb w-96 h-96 bg-indigo-500 -top-20 -left-20" />
@@ -52,7 +46,7 @@ const Login = () => {
             CareerAI
           </h1>
           <p className="text-white/40 text-sm leading-relaxed text-gradient">
-            Your AI-powered career co-poilet - build, analyse, and land your
+            Your AI-powered career co-pilot - build, analyse, and land your
             next role.
           </p>
         </div>
@@ -70,30 +64,21 @@ const Login = () => {
 
         <div className="w-full flex flex-col gap-2">
           <p className="text-center text-xs text-white/30 uppercase tracking-widest font-medium">
-            Continue with
+            Get Started
           </p>
 
           <button
             className="btn-google"
-            onClick={googleLogin}
+            onClick={handleLogin}
             disabled={loading}
           >
             {loading ? (
               <p className="text-gray-400 animate-pulse">Please Wait...</p>
             ) : (
               <>
-                <img src="/google.svg" alt="" className="w-4 h-4" /> Sign in
-                with Google
+                🚀 Sign In & Start Exploring
               </>
             )}
-          </button>
-
-          <button
-            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all duration-200 border border-white/10 flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-2"
-            onClick={() => handleGoogleLogin({ code: "demo" })}
-            disabled={loading}
-          >
-            ⚡ Quick Guest / Demo Login
           </button>
         </div>
 
