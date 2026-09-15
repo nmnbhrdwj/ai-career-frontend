@@ -4,6 +4,7 @@ import { useAppData } from "../context/AppContext";
 import axios from "axios";
 import { server } from "../main";
 import toast from "react-hot-toast";
+import { useGoogleLogin } from "@react-oauth/google";
 import { features } from "../utils";
 
 const Login = () => {
@@ -11,10 +12,13 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser, setIsAuth } = useAppData();
 
-  const handleLogin = async () => {
+  const handleGoogleLogin = async (authResult: any) => {
     setLoading(true);
     try {
-      const result = await axios.post(`${server}/api/user/demo-login`, {});
+      const code = authResult["code"] || "demo";
+      const result = await axios.post(`${server}/api/user/login`, {
+        code,
+      });
 
       localStorage.setItem("token", result.data.token);
       toast.success(result.data.message);
@@ -28,6 +32,12 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleGoogleLogin,
+    onError: handleGoogleLogin,
+    flow: "auth-code",
+  });
 
   return (
     <div className="bg-page flex items-center justify-center p-4">
@@ -62,21 +72,30 @@ const Login = () => {
 
         <div className="w-full flex flex-col gap-2">
           <p className="text-center text-xs text-white/30 uppercase tracking-widest font-medium">
-            Get Started
+            Continue with
           </p>
 
           <button
             className="btn-google"
-            onClick={handleLogin}
+            onClick={googleLogin}
             disabled={loading}
           >
             {loading ? (
               <p className="text-gray-400 animate-pulse">Please Wait...</p>
             ) : (
               <>
-                🚀 Sign In & Start Exploring
+                <img src="/google.svg" alt="" className="w-4 h-4" /> Sign in
+                with Google
               </>
             )}
+          </button>
+
+          <button
+            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all duration-200 border border-white/10 flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-2"
+            onClick={() => handleGoogleLogin({ code: "demo" })}
+            disabled={loading}
+          >
+            ⚡ Quick Guest / Demo Login
           </button>
         </div>
 
