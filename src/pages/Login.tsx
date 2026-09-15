@@ -9,8 +9,35 @@ import { features } from "../utils";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const { setUser, setIsAuth } = useAppData();
+
+  const handleEmailLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await axios.post(`${server}/api/user/email-login`, {
+        email,
+      });
+
+      localStorage.setItem("token", result.data.token);
+      toast.success(result.data.message);
+      setLoading(false);
+      setUser(result.data.user);
+      setIsAuth(true);
+      navigate("/");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Problem while login");
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async (authResult: any) => {
     setLoading(true);
@@ -70,10 +97,30 @@ const Login = () => {
 
         <div className="divider-subtle"></div>
 
-        <div className="w-full flex flex-col gap-2">
-          <p className="text-center text-xs text-white/30 uppercase tracking-widest font-medium">
-            Continue with
-          </p>
+        <div className="w-full flex flex-col gap-3">
+          <form onSubmit={handleEmailLogin} className="flex flex-col gap-2.5">
+            <label className="text-xs text-white/40 font-medium">Enter Your Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="e.g. 23ucc576@lnmiit.ac.in"
+              className="w-full py-3 px-4 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+            />
+            <button
+              type="submit"
+              className="btn-primary py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "✉️ Sign In with Email"}
+            </button>
+          </form>
+
+          <div className="flex items-center gap-3 my-1">
+            <div className="h-px bg-white/10 flex-1" />
+            <span className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">Or</span>
+            <div className="h-px bg-white/10 flex-1" />
+          </div>
 
           <button
             className="btn-google"
@@ -91,7 +138,7 @@ const Login = () => {
           </button>
 
           <button
-            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all duration-200 border border-white/10 flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-2"
+            className="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all duration-200 border border-white/10 flex items-center justify-center gap-2 cursor-pointer shadow-lg"
             onClick={() => handleGoogleLogin({ code: "demo" })}
             disabled={loading}
           >
