@@ -14,9 +14,7 @@ const Login = () => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const result = await axios.post(`${server}/api/user/login`, {
-        code: "demo",
-      });
+      const result = await axios.post(`${server}/api/user/demo-login`, {});
 
       localStorage.setItem("token", result.data.token);
       toast.success(result.data.message);
